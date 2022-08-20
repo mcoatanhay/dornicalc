@@ -1,18 +1,16 @@
-﻿#!/usr/bin/python3
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 # Fichier: mes_modules_path.py
 # Auteur: Marc COATANHAY
 
 """
-    Ajout du path nécessaire à l'importation des modules perso.
+    Ajout du path nécessaire à l'importation de modules personnels.
 """
 
 # Import des modules
 import sys
 
 # Définitions constantes et variables globales
-repertoire = 'c:\\users\\mc\\mu_code\\_mes_modules\\'
+repertoire = 'C:\\Users\\MC\\Documents\\Python\\Mes_modules'
 sys.path.append(repertoire)
-print('mes modules path :', repertoire)
-
-# Définitions fonctions et classes
+print('* Mes modules path :', repertoire, '/ok')

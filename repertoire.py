@@ -1,4 +1,4 @@
-﻿#!/usr/bin/python3
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 # Fichier: repertoire.py
 # Auteur: Marc COATANHAY
@@ -13,6 +13,4 @@ from os import chdir, path, getcwd
 # Définitions constantes et variables globales
 def filerep():
     chdir(path.split(__file__)[0])
-    print('repertoire :', getcwd())
-
-# Définitions fonctions et classes
+    print('* Répertoire :', getcwd())

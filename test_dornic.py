@@ -18,7 +18,7 @@ class DornicTest(unittest.TestCase):
     def test_dornic(self):
         afficher_calculs = True
         reponse = 10
-        resultat = d(10, 1, 1/9, True, "bthy")
+        resultat = d(10, 1, 1/9, True)
         if afficher_calculs:
             print()
             print("----------- test_dornic")

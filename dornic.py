@@ -26,6 +26,12 @@ M = 90 # (g/mol)
 pKa = 3.86
 pKe = 14
 calculs = []
+v_lait = 10
+v_eq = 3
+c_soude = 1/9
+graph = True
+precision=5
+detail_graph=100
 
 # Définitions fonctions et classes
 def c(D):
@@ -40,7 +46,7 @@ def c(D):
     c_m = D / 10
     return c_m / M
 
-def d(v_lait, v_eq, c_soude, graph=False, indicateur = "", precision=5, detail_graph=100):
+def d(v_lait, v_eq, c_soude, graph=False, precision=5, detail_graph=100):
     """"
         Détermination du degré Dornic.
         Entrée :
@@ -65,40 +71,49 @@ def d(v_lait, v_eq, c_soude, graph=False, indicateur = "", precision=5, detail_g
         while v <= max_v:
             liste_vsoude.append(v)
             n_soude = v*c_soude # (mmol)
-            liste_ph.append(pH(v, c_soude, v_lait, c_acide, precision))
+            pH_calc = pH(v, c_soude, v_lait, c_acide, precision)
+            liste_ph.append(pH_calc)
+            if (abs(v - v_eq) < delta_v/2):
+                pH_eq = pH_calc
             v += delta_v # (mL)
         # Affichage de la courbe de dosage
         fig, ax = plt.subplots(1, 1)
         plt.plot(liste_vsoude, liste_ph)
-        titre = "Dosage de l'acide lactique "
-        if (indicateur != ""):
-            titre += " - indicateur = " + indicateur
+        titre = "Dosage de l'acide lactique dans " + str(v_lait)
+        titre += " mL de lait à "
+        titre += format(degre_dornic, '0.2E') + " °D"
         plt.title(titre)
-        plt.xlabel("Vsoude (mL)")
-        plt.ylabel("pH")
+        label_x = "Vsoude (mL) à " + format(c_soude, '0.2E') + " mol/L, "
+        label_x += "Veq = " + format(v_eq, '0.1f')
+        plt.xlabel(label_x)
+        plt.ylabel("pH, pHeq = " + format(pH_eq, '0.1f'))
         ax.get_xaxis().set_minor_locator(mpl.ticker.AutoMinorLocator())
         ax.get_yaxis().set_minor_locator(mpl.ticker.AutoMinorLocator())
         ax.grid(b=True, which='major', color='black', linewidth=1.0)
         ax.grid(b=True, which='minor', color='black', linewidth=0.5)
         ax.set_xlim( 0, int(max_v))
         ax.set_ylim( 0, 14)
-        # Affichage du domaine de virage
-        if(indicateur == "bbt"):
-            a = 6
-            b = 7.6
-        elif(indicateur == "ppht"):
-            a = 8.2
-            b = 10
-        elif(indicateur == "bthy"):
-            a = 8
-            b = 9.6
-        else:
-            a = 7
-            b = 7
-        y1 = [a for x in liste_vsoude]
-        y2 = [b for x in liste_vsoude]
-        plt.plot(liste_vsoude, y1)
-        plt.plot(liste_vsoude, y2)
+        # Affichage des domaines de virage
+        indicateurs = [
+            (6,     7.6,    "bbt 6,0 - 7,6",  "blue"),
+            (8.3,   10,     "ppht 8,3 - 10", "red"),
+            (8,     9.6,    "bthy 8,0 - 9,6", "green"),
+            (7.2,   8.8,    "rcre 7,2 - 8,8", "orange")]
+        for (a, b, nom, couleur) in indicateurs:
+            y1 = [a for x in liste_vsoude]
+            y2 = [b for x in liste_vsoude]
+            y3 = []
+            compteur = 0
+            for x in liste_vsoude:
+                if (compteur % 2 == 0):
+                    y3.append(y1[compteur])
+                else:
+                    y3.append(y2[compteur])
+                compteur += 1
+            plt.plot(liste_vsoude, y1, color=couleur, label=nom)
+            plt.plot(liste_vsoude, y2, color=couleur)
+            # plt.plot(liste_vsoude, y3, color=couleur)
+        plt.legend()
         plt.show()
         calculs.append({'vsoude (mL)': liste_vsoude})
     return degre_dornic
@@ -149,3 +164,6 @@ def pH(v_soude, c_soude, v_lait, c_acide, precision):
             b = c
             fb = fc
     return c
+
+if (__name__ == "__main__"):
+    d(v_lait, v_eq, c_soude, graph, precision, detail_graph)
